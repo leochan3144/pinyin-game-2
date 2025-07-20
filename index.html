@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>普通话拼音挑战</title>
+    <title>普通話拼音挑戰</title>
     <style>
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
@@ -113,10 +113,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- 开始屏幕 -->
+        <!-- 開始屏幕 -->
         <div id="start-screen">
-            <h1>普通话拼音挑战</h1>
-            <p>请选择难度和测试词汇数量：</p>
+            <h1>普通話拼音挑戰</h1>
+            <p>請選擇難度和測試詞彙數量：</p>
             
             <div class="difficulty-selector">
                 <div class="difficulty-btn" data-level="1">程度1</div>
@@ -125,139 +125,139 @@
             </div>
             
             <div class="count-selector">
-                <label for="word-count">测试词汇数量：</label>
+                <label for="word-count">測試詞彙數量：</label>
                 <input type="number" id="word-count" min="5" max="50" value="10">
             </div>
             
-            <button id="start-btn" class="btn">开始挑战</button>
+            <button id="start-btn" class="btn">開始挑戰</button>
         </div>
         
-        <!-- 游戏屏幕 -->
+        <!-- 遊戲屏幕 -->
         <div id="game-screen">
-            <div id="progress-display">问题 1/<span id="total-questions">10</span></div>
+            <div id="progress-display">問題 1/<span id="total-questions">10</span></div>
             <div id="score-display">得分: 0</div>
-            <div id="word-display">词汇</div>
+            <div id="word-display">詞彙</div>
             
             <div id="options-container">
-                <!-- 选项将通过JavaScript动态生成 -->
+                <!-- 選項將通過JavaScript動態生成 -->
             </div>
         </div>
         
-        <!-- 结果屏幕 -->
+        <!-- 結果屏幕 -->
         <div id="result-screen">
-            <h1>测试完成!</h1>
+            <h1>測試完成!</h1>
             <div id="final-score" style="font-size: 24px; text-align: center; margin: 20px 0;"></div>
-            <button id="restart-btn" class="btn">再试一次</button>
+            <button id="restart-btn" class="btn">再試一次</button>
         </div>
     </div>
 
     <script>
-        // 精选双字词汇数据库
+        // 精選雙字詞彙數據庫
         const vocabulary = [
-            // 教育相关
+            // 教育相關
             { word: "教育", pinyin: "jiào yù" },
-            { word: "学校", pinyin: "xué xiào" },
-            { word: "教师", pinyin: "jiào shī" },
-            { word: "学生", pinyin: "xué shēng" },
-            { word: "课程", pinyin: "kè chéng" },
-            { word: "学习", pinyin: "xué xí" },
-            { word: "教学", pinyin: "jiào xué" },
-            { word: "考试", pinyin: "kǎo shì" },
-            { word: "知识", pinyin: "zhī shi" },
+            { word: "學校", pinyin: "xué xiào" },
+            { word: "教師", pinyin: "jiào shī" },
+            { word: "學生", pinyin: "xué shēng" },
+            { word: "課程", pinyin: "kè chéng" },
+            { word: "學習", pinyin: "xué xí" },
+            { word: "教學", pinyin: "jiào xué" },
+            { word: "考試", pinyin: "kǎo shì" },
+            { word: "知識", pinyin: "zhī shi" },
             { word: "文化", pinyin: "wén huà" },
             
-            // 社会相关
-            { word: "社会", pinyin: "shè huì" },
-            { word: "发展", pinyin: "fā zhǎn" },
-            { word: "经济", pinyin: "jīng jì" },
+            // 社會相關
+            { word: "社會", pinyin: "shè huì" },
+            { word: "發展", pinyin: "fā zhǎn" },
+            { word: "經濟", pinyin: "jīng jì" },
             { word: "政策", pinyin: "zhèng cè" },
             { word: "法律", pinyin: "fǎ lǜ" },
-            { word: "国际", pinyin: "guó jì" },
+            { word: "國際", pinyin: "guó jì" },
             { word: "政府", pinyin: "zhèng fǔ" },
             { word: "管理", pinyin: "guǎn lǐ" },
-            { word: "资源", pinyin: "zī yuán" },
-            { word: "环境", pinyin: "huán jìng" },
+            { word: "資源", pinyin: "zī yuán" },
+            { word: "環境", pinyin: "huán jìng" },
             
-            // 学术相关
+            // 學術相關
             { word: "研究", pinyin: "yán jiū" },
-            { word: "科学", pinyin: "kē xué" },
-            { word: "技术", pinyin: "jì shù" },
-            { word: "理论", pinyin: "lǐ lùn" },
-            { word: "实践", pinyin: "shí jiàn" },
-            { word: "创新", pinyin: "chuàng xīn" },
-            { word: "思维", pinyin: "sī wéi" },
+            { word: "科學", pinyin: "kē xué" },
+            { word: "技術", pinyin: "jì shù" },
+            { word: "理論", pinyin: "lǐ lùn" },
+            { word: "實踐", pinyin: "shí jiàn" },
+            { word: "創新", pinyin: "chuàng xīn" },
+            { word: "思維", pinyin: "sī wéi" },
             { word: "分析", pinyin: "fēn xī" },
-            { word: "系统", pinyin: "xì tǒng" },
+            { word: "系統", pinyin: "xì tǒng" },
             { word: "方法", pinyin: "fāng fǎ" },
             
-            // 品质相关
-            { word: "品质", pinyin: "pǐn zhì" },
+            // 品質相關
+            { word: "品質", pinyin: "pǐn zhì" },
             { word: "能力", pinyin: "néng lì" },
-            { word: "素质", pinyin: "sù zhì" },
-            { word: "态度", pinyin: "tài du" },
-            { word: "责任", pinyin: "zé rèn" },
+            { word: "素質", pinyin: "sù zhì" },
+            { word: "態度", pinyin: "tài du" },
+            { word: "責任", pinyin: "zé rèn" },
             { word: "合作", pinyin: "hé zuò" },
-            { word: "沟通", pinyin: "gōu tōng" },
-            { word: "领导", pinyin: "lǐng dǎo" },
-            { word: "团队", pinyin: "tuán duì" },
+            { word: "溝通", pinyin: "gōu tōng" },
+            { word: "領導", pinyin: "lǐng dǎo" },
+            { word: "團隊", pinyin: "tuán duì" },
             { word: "效率", pinyin: "xiào lǜ" }
         ];
 
-        // 相似拼音组 - 专门设计的迷惑选项
+        // 相似拼音組 - 專門設計的迷惑選項
         const similarGroups = [
-            // jiao yu 组
+            // jiao yu 組
             {
                 correct: "jiào yù",
                 similars: ["jiāo yù", "jiǎo yú", "jiào yú", "jiāo yú"]
             },
-            // xue xiao 组
+            // xue xiao 組
             {
                 correct: "xué xiào",
                 similars: ["xuē xiāo", "xuè xiǎo", "xué xiǎo", "xuě xiào"]
             },
-            // jiao shi 组
+            // jiao shi 組
             {
                 correct: "jiào shī",
                 similars: ["jiāo shì", "jiǎo shí", "jiào shí", "jiāo shí"]
             },
-            // xue sheng 组
+            // xue sheng 組
             {
                 correct: "xué shēng",
                 similars: ["xuē shéng", "xuè shěng", "xué shěng", "xuě shēng"]
             },
-            // ke cheng 组
+            // ke cheng 組
             {
                 correct: "kè chéng",
                 similars: ["kē chèng", "kě chēng", "kè chēng", "kē chéng"]
             },
-            // fa zhan 组
+            // fa zhan 組
             {
                 correct: "fā zhǎn",
                 similars: ["fá zhàn", "fǎ zhān", "fā zhàn", "fà zhǎn"]
             },
-            // jing ji 组
+            // jing ji 組
             {
                 correct: "jīng jì",
                 similars: ["jǐng jī", "jìng jí", "jīng jí", "jǐng jì"]
             },
-            // zheng ce 组
+            // zheng ce 組
             {
                 correct: "zhèng cè",
                 similars: ["zhēng cé", "zhěng cè", "zhèng cé", "zhēng cè"]
             },
-            // guan li 组
+            // guan li 組
             {
                 correct: "guǎn lǐ",
                 similars: ["guān lí", "guǎn lí", "guàn lǐ", "guān lǐ"]
             },
-            // yan jiu 组
+            // yan jiu 組
             {
                 correct: "yán jiū",
                 similars: ["yān jiù", "yǎn jiū", "yán jiù", "yàn jiū"]
             }
         ];
 
-        // 游戏变量
+        // 遊戲變量
         let currentQuestion = 0;
         let score = 0;
         let selectedDifficulty = 1;
@@ -278,7 +278,7 @@
         const startBtn = document.getElementById('start-btn');
         const restartBtn = document.getElementById('restart-btn');
         
-        // 难度选择
+        // 難度選擇
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
@@ -287,13 +287,13 @@
             });
         });
         
-        // 默认选择程度1
+        // 默認選擇程度1
         document.querySelector('.difficulty-btn[data-level="1"]').classList.add('selected');
         
-        // 开始游戏
+        // 開始遊戲
         startBtn.addEventListener('click', startGame);
         
-        // 重新开始
+        // 重新開始
         restartBtn.addEventListener('click', function() {
             resultScreen.style.display = 'none';
             startScreen.style.display = 'block';
@@ -301,13 +301,13 @@
             currentQuestion = 0;
         });
         
-        // 开始游戏函数
+        // 開始遊戲函數
         function startGame() {
             totalQuestions = parseInt(wordCountInput.value);
             if (totalQuestions < 5) totalQuestions = 5;
             if (totalQuestions > 50) totalQuestions = 50;
             
-            // 根据难度准备问题
+            // 根據難度準備問題
             prepareQuestions();
             
             startScreen.style.display = 'none';
@@ -317,50 +317,105 @@
             showQuestion();
         }
         
-        // 准备问题
+        // 準備問題
         function prepareQuestions() {
             questions = [];
             
-            // 随机选择词汇
+            // 隨機選擇詞彙
             const shuffled = [...vocabulary].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, totalQuestions);
             
-            // 为每个词汇生成问题和选项
+            // 為每個詞彙生成問題和選項
             selected.forEach(item => {
-                // 查找是否有预设的相似拼音组
-                const similarGroup = similarGroups.find(group => group.correct === item.pinyin);
+                // 查找是否有預設的相似拼音組
+                const similarGroup = similarGroups.find(group => removeToneNumbers(group.correct) === removeToneNumbers(item.pinyin));
                 
                 let options;
                 
                 if (similarGroup) {
-                    // 使用预设的相似拼音组
+                    // 使用預設的相似拼音組
                     options = [item.pinyin, ...similarGroup.similars.slice(0, 3)];
                 } else {
-                    // 生成相似拼音选项
+                    // 生成相似拼音選項
                     options = generateSimilarOptions(item.pinyin);
                 }
                 
-                // 打乱选项顺序
+                // 移除選項中的數字聲調並添加正確的聲調標記
+                options = options.map(opt => addToneMark(removeToneNumbers(opt), getToneNumber(opt)));
+                
+                // 確保所有選項的拼音都是唯一的
+                options = ensureUniqueOptions(options);
+                
+                // 打亂選項順序
                 options = options.sort(() => 0.5 - Math.random());
                 
                 questions.push({
                     word: item.word,
-                    correctPinyin: item.pinyin,
+                    correctPinyin: addToneMark(removeToneNumbers(item.pinyin), getToneNumber(item.pinyin)),
                     options: options
                 });
             });
         }
         
-        // 生成相似拼音选项
+        // 確保所有選項都是唯一的
+        function ensureUniqueOptions(options) {
+            const uniqueOptions = [];
+            const seen = new Set();
+            
+            for (const option of options) {
+                if (!seen.has(option)) {
+                    seen.add(option);
+                    uniqueOptions.push(option);
+                }
+            }
+            
+            // 如果因為重複導致選項不足，補充新的選項
+            while (uniqueOptions.length < 4) {
+                const newOption = generateAdditionalOption(uniqueOptions[0]);
+                if (!seen.has(newOption)) {
+                    seen.add(newOption);
+                    uniqueOptions.push(newOption);
+                }
+            }
+            
+            return uniqueOptions.slice(0, 4);
+        }
+        
+        // 生成額外的選項
+        function generateAdditionalOption(basePinyin) {
+            const syllables = basePinyin.split(' ');
+            let newPinyin = '';
+            
+            for (let i = 0; i < syllables.length; i++) {
+                newPinyin += modifySyllable(syllables[i], Math.floor(Math.random() * 3) + 1) + ' ';
+            }
+            
+            return newPinyin.trim();
+        }
+        
+        // 移除拼音中的數字
+        function removeToneNumbers(pinyin) {
+            if (!pinyin) return '';
+            return pinyin.replace(/[1-5]/g, '');
+        }
+        
+        // 獲取拼音的聲調數字
+        function getToneNumber(pinyin) {
+            if (!pinyin) return '';
+            const toneMatch = pinyin.match(/[1-5]/);
+            return toneMatch ? toneMatch[0] : '';
+        }
+        
+        // 生成相似拼音選項
         function generateSimilarOptions(targetPinyin) {
             const options = [targetPinyin];
             const syllables = targetPinyin.split(' ');
             
-            // 生成3个相似选项
+            // 生成3個相似選項
             for (let i = 0; i < 3; i++) {
                 let similarPinyin = '';
                 
-                // 对每个音节进行相似变换
+                // 對每個音節進行相似變換
                 for (let j = 0; j < syllables.length; j++) {
                     similarPinyin += modifySyllable(syllables[j], i + 1) + ' ';
                 }
@@ -372,7 +427,7 @@
             return options;
         }
         
-        // 修改音节生成相似拼音
+        // 修改音節生成相似拼音
         function modifySyllable(syllable, variation) {
             const initials = ['b','p','m','f','d','t','n','l','g','k','h','j','q','x','zh','ch','sh','r','z','c','s'];
             const finals = ['a','o','e','i','u','ü','ai','ei','ao','ou','an','en','ang','eng','ong',
@@ -381,18 +436,18 @@
                           'üe','üan','ün'];
             const tones = ['1', '2', '3', '4', ''];
             
-            // 提取原始音节的各部分
+            // 提取原始音節的各部分
             const originalInitial = getInitial(syllable);
             const originalFinal = getFinal(syllable);
-            const originalTone = getToneMark(syllable);
+            const originalTone = getToneNumber(syllable);
             
             let newInitial = originalInitial;
             let newFinal = originalFinal;
             let newTone = originalTone;
             
-            // 根据variation决定修改哪部分
+            // 根據variation決定修改哪部分
             switch(variation % 3) {
-                case 1: // 修改声母
+                case 1: // 修改聲母
                     if (originalInitial) {
                         const similarInitials = initials.filter(i => 
                             i !== originalInitial && 
@@ -403,7 +458,7 @@
                         }
                     }
                     break;
-                case 2: // 修改韵母
+                case 2: // 修改韻母
                     const similarFinals = finals.filter(f => 
                         f !== originalFinal && 
                         (f.charAt(0) === originalFinal.charAt(0) || 
@@ -413,32 +468,32 @@
                         newFinal = similarFinals[Math.floor(Math.random() * similarFinals.length)];
                     }
                     break;
-                case 0: // 修改声调
+                case 0: // 修改聲調
                     newTone = tones[Math.floor(Math.random() * tones.length)];
                     break;
             }
             
-            // 组合新音节
+            // 組合新音節
             let newSyllable = newInitial + newFinal;
             
-            // 添加声调标记
+            // 添加聲調標記
             if (newTone) {
-                newSyllable = addToneMark(newSyllable, newTone);
+                newSyllable = newSyllable + newTone;
             }
             
             return newSyllable;
         }
         
-        // 获取音节的声母
+        // 獲取音節的聲母
         function getInitial(syllable) {
             if (!syllable) return '';
             
-            // 处理 zh, ch, sh
+            // 處理 zh, ch, sh
             if (syllable.startsWith('zh')) return 'zh';
             if (syllable.startsWith('ch')) return 'ch';
             if (syllable.startsWith('sh')) return 'sh';
             
-            // 处理其他声母
+            // 處理其他聲母
             const initial = syllable.charAt(0);
             if (['b','p','m','f','d','t','n','l','g','k','h','j','q','x','z','c','s','r','y','w'].includes(initial)) {
                 return initial;
@@ -447,43 +502,24 @@
             return '';
         }
         
-        // 获取音节的韵母
+        // 獲取音節的韻母
         function getFinal(syllable) {
             if (!syllable) return '';
             
-            // 去除声母部分
+            // 去除聲母部分
             let final = syllable;
             const initial = getInitial(syllable);
             if (initial) {
                 final = syllable.substring(initial.length);
             }
             
-            // 去除声调数字
+            // 去除聲調數字
             final = final.replace(/[1-5]/, '');
             
             return final;
         }
         
-        // 获取音节的声调标记
-        function getToneMark(syllable) {
-            if (!syllable) return '';
-            
-            // 检查数字表示的声调
-            const toneMatch = syllable.match(/[1-5]/);
-            if (toneMatch) {
-                return toneMatch[0];
-            }
-            
-            // 根据拼音规则判断声调
-            if (/[āēīōūǖ]/.test(syllable)) return '1';
-            if (/[áéíóúǘ]/.test(syllable)) return '2';
-            if (/[ǎěǐǒǔǚ]/.test(syllable)) return '3';
-            if (/[àèìòùǜ]/.test(syllable)) return '4';
-            
-            return ''; // 轻声
-        }
-        
-        // 为音节添加声调标记
+        // 為音節添加聲調標記
         function addToneMark(syllable, tone) {
             const vowelMap = {
                 'a': ['ā', 'á', 'ǎ', 'à'],
@@ -499,14 +535,14 @@
                 return syllable;
             }
             
-            // 找到音节中的主要元音
+            // 找到音節中的主要元音
             const vowels = ['a', 'e', 'o', 'i', 'u', 'ü'];
             let mainVowel = '';
             let mainVowelPos = -1;
             
             for (let i = 0; i < syllable.length; i++) {
                 if (vowels.includes(syllable[i])) {
-                    // 处理ü特殊情况
+                    // 處理ü特殊情況
                     if (syllable[i] === 'u' && i > 0 && syllable[i-1] === 'y') {
                         mainVowel = 'ü';
                     } else {
@@ -518,10 +554,10 @@
             }
             
             if (!mainVowel || !vowelMap[mainVowel]) {
-                return syllable + tone;
+                return syllable;
             }
             
-            // 替换主要元音为带声调的形式
+            // 替換主要元音為帶聲調的形式
             const markedVowel = vowelMap[mainVowel][toneNum - 1];
             let newSyllable = syllable.substring(0, mainVowelPos) + 
                              markedVowel + 
@@ -530,10 +566,10 @@
             return newSyllable;
         }
         
-        // 显示问题
+        // 顯示問題
         function showQuestion() {
             if (currentQuestion >= questions.length) {
-                // 游戏结束
+                // 遊戲結束
                 gameScreen.style.display = 'none';
                 resultScreen.style.display = 'block';
                 finalScoreDisplay.textContent = `你的得分: ${score}/${totalQuestions}`;
@@ -543,10 +579,10 @@
             const question = questions[currentQuestion];
             wordDisplay.textContent = question.word;
             
-            // 清空选项容器
+            // 清空選項容器
             optionsContainer.innerHTML = '';
             
-            // 创建选项按钮
+            // 創建選項按鈕
             question.options.forEach((option, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -557,18 +593,20 @@
                 optionsContainer.appendChild(btn);
             });
             
-            // 更新进度
-            progressDisplay.textContent = `问题 ${currentQuestion + 1}/${totalQuestions}`;
+            // 更新進度
+            progressDisplay.textContent = `問題 ${currentQuestion + 1}/${totalQuestions}`;
         }
         
-        // 检查答案
+        // 檢查答案
         function checkAnswer(selectedOption, correctAnswer) {
             const optionButtons = document.querySelectorAll('.option-btn');
+            let correctButton = null;
             
             optionButtons.forEach(btn => {
                 btn.disabled = true;
                 if (btn.textContent === correctAnswer) {
                     btn.classList.add('correct');
+                    correctButton = btn;
                 } else if (btn.textContent === selectedOption && selectedOption !== correctAnswer) {
                     btn.classList.add('wrong');
                 }
@@ -577,9 +615,12 @@
             if (selectedOption === correctAnswer) {
                 score++;
                 scoreDisplay.textContent = `得分: ${score}`;
+            } else if (correctButton) {
+                // 確保只有一個正確答案按鈕會被標記
+                correctButton.classList.add('correct');
             }
             
-            // 延迟后进入下一题
+            // 延遲後進入下一題
             setTimeout(() => {
                 currentQuestion++;
                 showQuestion();
