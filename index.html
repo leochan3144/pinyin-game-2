@@ -1,631 +1,290 @@
+
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hans">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>普通話拼音挑戰</title>
-    <style>
-        body {
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        .btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        .option-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #ecf0f1;
-            border: 2px solid #bdc3c7;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        .option-btn:hover {
-            background-color: #d6eaf8;
-            border-color: #3498db;
-        }
-        .option-btn.correct {
-            background-color: #2ecc71;
-            color: white;
-            border-color: #27ae60;
-        }
-        .option-btn.wrong {
-            background-color: #e74c3c;
-            color: white;
-            border-color: #c0392b;
-        }
-        #game-screen, #result-screen {
-            display: none;
-        }
-        #word-display {
-            font-size: 36px;
-            text-align: center;
-            margin: 30px 0;
-            color: #2c3e50;
-            font-weight: bold;
-        }
-        #score-display {
-            text-align: center;
-            font-size: 24px;
-            margin: 20px 0;
-            color: #3498db;
-        }
-        #progress-display {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .difficulty-selector {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .difficulty-btn {
-            padding: 10px 20px;
-            margin: 0 10px;
-            background-color: #ecf0f1;
-            border: 2px solid #bdc3c7;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .difficulty-btn.selected {
-            background-color: #3498db;
-            color: white;
-            border-color: #2980b9;
-        }
-        .count-selector {
-            text-align: center;
-            margin: 20px 0;
-        }
-        #word-count {
-            width: 60px;
-            padding: 5px;
-            font-size: 16px;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>普通話拼音選擇遊戲（進階迷惑版）</title>
+  <style>
+    body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background: #f9f9f9; }
+    h1 { color: #007acc; }
+    button { font-size: 18px; padding: 10px 20px; margin: 5px 0; width: 100%; max-width: 400px; }
+    .hidden { display: none; }
+    .feedback { margin-top: 10px; font-weight: bold; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 開始屏幕 -->
-        <div id="start-screen">
-            <h1>普通話拼音挑戰</h1>
-            <p>請選擇難度和測試詞彙數量：</p>
-            
-            <div class="difficulty-selector">
-                <div class="difficulty-btn" data-level="1">程度1</div>
-                <div class="difficulty-btn" data-level="2">程度2</div>
-                <div class="difficulty-btn" data-level="3">程度3</div>
-            </div>
-            
-            <div class="count-selector">
-                <label for="word-count">測試詞彙數量：</label>
-                <input type="number" id="word-count" min="5" max="50" value="10">
-            </div>
-            
-            <button id="start-btn" class="btn">開始挑戰</button>
-        </div>
-        
-        <!-- 遊戲屏幕 -->
-        <div id="game-screen">
-            <div id="progress-display">問題 1/<span id="total-questions">10</span></div>
-            <div id="score-display">得分: 0</div>
-            <div id="word-display">詞彙</div>
-            
-            <div id="options-container">
-                <!-- 選項將通過JavaScript動態生成 -->
-            </div>
-        </div>
-        
-        <!-- 結果屏幕 -->
-        <div id="result-screen">
-            <h1>測試完成!</h1>
-            <div id="final-score" style="font-size: 24px; text-align: center; margin: 20px 0;"></div>
-            <button id="restart-btn" class="btn">再試一次</button>
-        </div>
-    </div>
+<h1>🎮 普通話拼音選擇遊戲（進階迷惑版）</h1>
 
-    <script>
-        // 精選雙字詞彙數據庫
-        const vocabulary = [
-            // 教育相關
-            { word: "教育", pinyin: "jiào yù" },
-            { word: "學校", pinyin: "xué xiào" },
-            { word: "教師", pinyin: "jiào shī" },
-            { word: "學生", pinyin: "xué shēng" },
-            { word: "課程", pinyin: "kè chéng" },
-            { word: "學習", pinyin: "xué xí" },
-            { word: "教學", pinyin: "jiào xué" },
-            { word: "考試", pinyin: "kǎo shì" },
-            { word: "知識", pinyin: "zhī shi" },
-            { word: "文化", pinyin: "wén huà" },
-            
-            // 社會相關
-            { word: "社會", pinyin: "shè huì" },
-            { word: "發展", pinyin: "fā zhǎn" },
-            { word: "經濟", pinyin: "jīng jì" },
-            { word: "政策", pinyin: "zhèng cè" },
-            { word: "法律", pinyin: "fǎ lǜ" },
-            { word: "國際", pinyin: "guó jì" },
-            { word: "政府", pinyin: "zhèng fǔ" },
-            { word: "管理", pinyin: "guǎn lǐ" },
-            { word: "資源", pinyin: "zī yuán" },
-            { word: "環境", pinyin: "huán jìng" },
-            
-            // 學術相關
-            { word: "研究", pinyin: "yán jiū" },
-            { word: "科學", pinyin: "kē xué" },
-            { word: "技術", pinyin: "jì shù" },
-            { word: "理論", pinyin: "lǐ lùn" },
-            { word: "實踐", pinyin: "shí jiàn" },
-            { word: "創新", pinyin: "chuàng xīn" },
-            { word: "思維", pinyin: "sī wéi" },
-            { word: "分析", pinyin: "fēn xī" },
-            { word: "系統", pinyin: "xì tǒng" },
-            { word: "方法", pinyin: "fāng fǎ" },
-            
-            // 品質相關
-            { word: "品質", pinyin: "pǐn zhì" },
-            { word: "能力", pinyin: "néng lì" },
-            { word: "素質", pinyin: "sù zhì" },
-            { word: "態度", pinyin: "tài du" },
-            { word: "責任", pinyin: "zé rèn" },
-            { word: "合作", pinyin: "hé zuò" },
-            { word: "溝通", pinyin: "gōu tōng" },
-            { word: "領導", pinyin: "lǐng dǎo" },
-            { word: "團隊", pinyin: "tuán duì" },
-            { word: "效率", pinyin: "xiào lǜ" }
-        ];
+<div id="start-screen">
+  <label>選擇題數：
+    <select id="question-count">
+      <option value="5">5題</option>
+      <option value="10" selected>10題</option>
+      <option value="20">20題</option>
+    </select>
+  </label>
+  <br><br>
+  <button onclick="startGame()">開始遊戲</button>
+</div>
 
-        // 相似拼音組 - 專門設計的迷惑選項
-        const similarGroups = [
-            // jiao yu 組
-            {
-                correct: "jiào yù",
-                similars: ["jiāo yù", "jiǎo yú", "jiào yú", "jiāo yú"]
-            },
-            // xue xiao 組
-            {
-                correct: "xué xiào",
-                similars: ["xuē xiāo", "xuè xiǎo", "xué xiǎo", "xuě xiào"]
-            },
-            // jiao shi 組
-            {
-                correct: "jiào shī",
-                similars: ["jiāo shì", "jiǎo shí", "jiào shí", "jiāo shí"]
-            },
-            // xue sheng 組
-            {
-                correct: "xué shēng",
-                similars: ["xuē shéng", "xuè shěng", "xué shěng", "xuě shēng"]
-            },
-            // ke cheng 組
-            {
-                correct: "kè chéng",
-                similars: ["kē chèng", "kě chēng", "kè chēng", "kē chéng"]
-            },
-            // fa zhan 組
-            {
-                correct: "fā zhǎn",
-                similars: ["fá zhàn", "fǎ zhān", "fā zhàn", "fà zhǎn"]
-            },
-            // jing ji 組
-            {
-                correct: "jīng jì",
-                similars: ["jǐng jī", "jìng jí", "jīng jí", "jǐng jì"]
-            },
-            // zheng ce 組
-            {
-                correct: "zhèng cè",
-                similars: ["zhēng cé", "zhěng cè", "zhèng cé", "zhēng cè"]
-            },
-            // guan li 組
-            {
-                correct: "guǎn lǐ",
-                similars: ["guān lí", "guǎn lí", "guàn lǐ", "guān lǐ"]
-            },
-            // yan jiu 組
-            {
-                correct: "yán jiū",
-                similars: ["yān jiù", "yǎn jiū", "yán jiù", "yàn jiū"]
-            }
-        ];
+<div id="game-area" class="hidden">
+  <h2 id="word-display"></h2>
+  <button onclick="playPronunciation()">🔊 播放發音</button>
+  <div id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <p>得分：<span id="score">0</span> ／ 題號：<span id="current">1</span> / <span id="total"></span></p>
+</div>
 
-        // 遊戲變量
-        let currentQuestion = 0;
-        let score = 0;
-        let selectedDifficulty = 1;
-        let totalQuestions = 10;
-        let questions = [];
-        
-        // DOM元素
-        const startScreen = document.getElementById('start-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const resultScreen = document.getElementById('result-screen');
-        const wordDisplay = document.getElementById('word-display');
-        const optionsContainer = document.getElementById('options-container');
-        const scoreDisplay = document.getElementById('score-display');
-        const progressDisplay = document.getElementById('progress-display');
-        const totalQuestionsDisplay = document.getElementById('total-questions');
-        const finalScoreDisplay = document.getElementById('final-score');
-        const wordCountInput = document.getElementById('word-count');
-        const startBtn = document.getElementById('start-btn');
-        const restartBtn = document.getElementById('restart-btn');
-        
-        // 難度選擇
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedDifficulty = parseInt(this.getAttribute('data-level'));
-            });
-        });
-        
-        // 默認選擇程度1
-        document.querySelector('.difficulty-btn[data-level="1"]').classList.add('selected');
-        
-        // 開始遊戲
-        startBtn.addEventListener('click', startGame);
-        
-        // 重新開始
-        restartBtn.addEventListener('click', function() {
-            resultScreen.style.display = 'none';
-            startScreen.style.display = 'block';
-            score = 0;
-            currentQuestion = 0;
-        });
-        
-        // 開始遊戲函數
-        function startGame() {
-            totalQuestions = parseInt(wordCountInput.value);
-            if (totalQuestions < 5) totalQuestions = 5;
-            if (totalQuestions > 50) totalQuestions = 50;
-            
-            // 根據難度準備問題
-            prepareQuestions();
-            
-            startScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            totalQuestionsDisplay.textContent = totalQuestions;
-            
-            showQuestion();
-        }
-        
-        // 準備問題
-        function prepareQuestions() {
-            questions = [];
-            
-            // 隨機選擇詞彙
-            const shuffled = [...vocabulary].sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, totalQuestions);
-            
-            // 為每個詞彙生成問題和選項
-            selected.forEach(item => {
-                // 查找是否有預設的相似拼音組
-                const similarGroup = similarGroups.find(group => removeToneNumbers(group.correct) === removeToneNumbers(item.pinyin));
-                
-                let options;
-                
-                if (similarGroup) {
-                    // 使用預設的相似拼音組
-                    options = [item.pinyin, ...similarGroup.similars.slice(0, 3)];
-                } else {
-                    // 生成相似拼音選項
-                    options = generateSimilarOptions(item.pinyin);
-                }
-                
-                // 移除選項中的數字聲調並添加正確的聲調標記
-                options = options.map(opt => addToneMark(removeToneNumbers(opt), getToneNumber(opt)));
-                
-                // 確保所有選項的拼音都是唯一的
-                options = ensureUniqueOptions(options);
-                
-                // 打亂選項順序
-                options = options.sort(() => 0.5 - Math.random());
-                
-                questions.push({
-                    word: item.word,
-                    correctPinyin: addToneMark(removeToneNumbers(item.pinyin), getToneNumber(item.pinyin)),
-                    options: options
-                });
-            });
-        }
-        
-        // 確保所有選項都是唯一的
-        function ensureUniqueOptions(options) {
-            const uniqueOptions = [];
-            const seen = new Set();
-            
-            for (const option of options) {
-                if (!seen.has(option)) {
-                    seen.add(option);
-                    uniqueOptions.push(option);
-                }
-            }
-            
-            // 如果因為重複導致選項不足，補充新的選項
-            while (uniqueOptions.length < 4) {
-                const newOption = generateAdditionalOption(uniqueOptions[0]);
-                if (!seen.has(newOption)) {
-                    seen.add(newOption);
-                    uniqueOptions.push(newOption);
-                }
-            }
-            
-            return uniqueOptions.slice(0, 4);
-        }
-        
-        // 生成額外的選項
-        function generateAdditionalOption(basePinyin) {
-            const syllables = basePinyin.split(' ');
-            let newPinyin = '';
-            
-            for (let i = 0; i < syllables.length; i++) {
-                newPinyin += modifySyllable(syllables[i], Math.floor(Math.random() * 3) + 1) + ' ';
-            }
-            
-            return newPinyin.trim();
-        }
-        
-        // 移除拼音中的數字
-        function removeToneNumbers(pinyin) {
-            if (!pinyin) return '';
-            return pinyin.replace(/[1-5]/g, '');
-        }
-        
-        // 獲取拼音的聲調數字
-        function getToneNumber(pinyin) {
-            if (!pinyin) return '';
-            const toneMatch = pinyin.match(/[1-5]/);
-            return toneMatch ? toneMatch[0] : '';
-        }
-        
-        // 生成相似拼音選項
-        function generateSimilarOptions(targetPinyin) {
-            const options = [targetPinyin];
-            const syllables = targetPinyin.split(' ');
-            
-            // 生成3個相似選項
-            for (let i = 0; i < 3; i++) {
-                let similarPinyin = '';
-                
-                // 對每個音節進行相似變換
-                for (let j = 0; j < syllables.length; j++) {
-                    similarPinyin += modifySyllable(syllables[j], i + 1) + ' ';
-                }
-                
-                similarPinyin = similarPinyin.trim();
-                options.push(similarPinyin);
-            }
-            
-            return options;
-        }
-        
-        // 修改音節生成相似拼音
-        function modifySyllable(syllable, variation) {
-            const initials = ['b','p','m','f','d','t','n','l','g','k','h','j','q','x','zh','ch','sh','r','z','c','s'];
-            const finals = ['a','o','e','i','u','ü','ai','ei','ao','ou','an','en','ang','eng','ong',
-                          'ia','ie','iao','iou','ian','in','iang','ing','iong',
-                          'ua','uo','uai','uei','uan','uen','uang','ueng',
-                          'üe','üan','ün'];
-            const tones = ['1', '2', '3', '4', ''];
-            
-            // 提取原始音節的各部分
-            const originalInitial = getInitial(syllable);
-            const originalFinal = getFinal(syllable);
-            const originalTone = getToneNumber(syllable);
-            
-            let newInitial = originalInitial;
-            let newFinal = originalFinal;
-            let newTone = originalTone;
-            
-            // 根據variation決定修改哪部分
-            switch(variation % 3) {
-                case 1: // 修改聲母
-                    if (originalInitial) {
-                        const similarInitials = initials.filter(i => 
-                            i !== originalInitial && 
-                            i.charAt(0) === originalInitial.charAt(0)
-                        );
-                        if (similarInitials.length > 0) {
-                            newInitial = similarInitials[Math.floor(Math.random() * similarInitials.length)];
-                        }
-                    }
-                    break;
-                case 2: // 修改韻母
-                    const similarFinals = finals.filter(f => 
-                        f !== originalFinal && 
-                        (f.charAt(0) === originalFinal.charAt(0) || 
-                         f.slice(-1) === originalFinal.slice(-1))
-                    );
-                    if (similarFinals.length > 0) {
-                        newFinal = similarFinals[Math.floor(Math.random() * similarFinals.length)];
-                    }
-                    break;
-                case 0: // 修改聲調
-                    newTone = tones[Math.floor(Math.random() * tones.length)];
-                    break;
-            }
-            
-            // 組合新音節
-            let newSyllable = newInitial + newFinal;
-            
-            // 添加聲調標記
-            if (newTone) {
-                newSyllable = newSyllable + newTone;
-            }
-            
-            return newSyllable;
-        }
-        
-        // 獲取音節的聲母
-        function getInitial(syllable) {
-            if (!syllable) return '';
-            
-            // 處理 zh, ch, sh
-            if (syllable.startsWith('zh')) return 'zh';
-            if (syllable.startsWith('ch')) return 'ch';
-            if (syllable.startsWith('sh')) return 'sh';
-            
-            // 處理其他聲母
-            const initial = syllable.charAt(0);
-            if (['b','p','m','f','d','t','n','l','g','k','h','j','q','x','z','c','s','r','y','w'].includes(initial)) {
-                return initial;
-            }
-            
-            return '';
-        }
-        
-        // 獲取音節的韻母
-        function getFinal(syllable) {
-            if (!syllable) return '';
-            
-            // 去除聲母部分
-            let final = syllable;
-            const initial = getInitial(syllable);
-            if (initial) {
-                final = syllable.substring(initial.length);
-            }
-            
-            // 去除聲調數字
-            final = final.replace(/[1-5]/, '');
-            
-            return final;
-        }
-        
-        // 為音節添加聲調標記
-        function addToneMark(syllable, tone) {
-            const vowelMap = {
-                'a': ['ā', 'á', 'ǎ', 'à'],
-                'e': ['ē', 'é', 'ě', 'è'],
-                'i': ['ī', 'í', 'ǐ', 'ì'],
-                'o': ['ō', 'ó', 'ǒ', 'ò'],
-                'u': ['ū', 'ú', 'ǔ', 'ù'],
-                'ü': ['ǖ', 'ǘ', 'ǚ', 'ǜ']
-            };
-            
-            const toneNum = parseInt(tone);
-            if (isNaN(toneNum) || toneNum < 1 || toneNum > 4) {
-                return syllable;
-            }
-            
-            // 找到音節中的主要元音
-            const vowels = ['a', 'e', 'o', 'i', 'u', 'ü'];
-            let mainVowel = '';
-            let mainVowelPos = -1;
-            
-            for (let i = 0; i < syllable.length; i++) {
-                if (vowels.includes(syllable[i])) {
-                    // 處理ü特殊情況
-                    if (syllable[i] === 'u' && i > 0 && syllable[i-1] === 'y') {
-                        mainVowel = 'ü';
-                    } else {
-                        mainVowel = syllable[i];
-                    }
-                    mainVowelPos = i;
-                    break;
-                }
-            }
-            
-            if (!mainVowel || !vowelMap[mainVowel]) {
-                return syllable;
-            }
-            
-            // 替換主要元音為帶聲調的形式
-            const markedVowel = vowelMap[mainVowel][toneNum - 1];
-            let newSyllable = syllable.substring(0, mainVowelPos) + 
-                             markedVowel + 
-                             syllable.substring(mainVowelPos + 1);
-            
-            return newSyllable;
-        }
-        
-        // 顯示問題
-        function showQuestion() {
-            if (currentQuestion >= questions.length) {
-                // 遊戲結束
-                gameScreen.style.display = 'none';
-                resultScreen.style.display = 'block';
-                finalScoreDisplay.textContent = `你的得分: ${score}/${totalQuestions}`;
-                return;
-            }
-            
-            const question = questions[currentQuestion];
-            wordDisplay.textContent = question.word;
-            
-            // 清空選項容器
-            optionsContainer.innerHTML = '';
-            
-            // 創建選項按鈕
-            question.options.forEach((option, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = option;
-                btn.addEventListener('click', function() {
-                    checkAnswer(option, question.correctPinyin);
-                });
-                optionsContainer.appendChild(btn);
-            });
-            
-            // 更新進度
-            progressDisplay.textContent = `問題 ${currentQuestion + 1}/${totalQuestions}`;
-        }
-        
-        // 檢查答案
-        function checkAnswer(selectedOption, correctAnswer) {
-            const optionButtons = document.querySelectorAll('.option-btn');
-            let correctButton = null;
-            
-            optionButtons.forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent === correctAnswer) {
-                    btn.classList.add('correct');
-                    correctButton = btn;
-                } else if (btn.textContent === selectedOption && selectedOption !== correctAnswer) {
-                    btn.classList.add('wrong');
-                }
-            });
-            
-            if (selectedOption === correctAnswer) {
-                score++;
-                scoreDisplay.textContent = `得分: ${score}`;
-            } else if (correctButton) {
-                // 確保只有一個正確答案按鈕會被標記
-                correctButton.classList.add('correct');
-            }
-            
-            // 延遲後進入下一題
-            setTimeout(() => {
-                currentQuestion++;
-                showQuestion();
-            }, 1500);
-        }
-    </script>
+<div id="end-screen" class="hidden">
+  <h2>🎉 遊戲結束！</h2>
+  <p>你的得分是：<span id="final-score"></span></p>
+  <button onclick="location.reload()">再玩一次</button>
+</div>
+
+<script>
+const wordBank = [
+  { word: "老師", pinyin: "lǎo shī" },
+  { word: "學生", pinyin: "xué shēng" },
+  { word: "圖書館", pinyin: "tú shū guǎn" },
+  { word: "課本", pinyin: "kè běn" },
+  { word: "作業", pinyin: "zuò yè" },
+  { word: "上課", pinyin: "shàng kè" },
+  { word: "考試", pinyin: "kǎo shì" },
+  { word: "鉛筆", pinyin: "qiān bǐ" },
+  { word: "數學", pinyin: "shù xué" },
+  { word: "白板", pinyin: "bái bǎn" }
+];
+
+const confusables = {
+  "initials": {
+    "zh": [
+      "z",
+      "ch"
+    ],
+    "ch": [
+      "zh",
+      "q"
+    ],
+    "sh": [
+      "s",
+      "x"
+    ],
+    "z": [
+      "zh",
+      "j"
+    ],
+    "c": [
+      "ch",
+      "q"
+    ],
+    "s": [
+      "sh",
+      "x"
+    ],
+    "j": [
+      "z",
+      "q"
+    ],
+    "q": [
+      "c",
+      "ch"
+    ],
+    "x": [
+      "sh",
+      "s"
+    ],
+    "b": [
+      "p",
+      "d"
+    ],
+    "d": [
+      "b",
+      "t"
+    ],
+    "t": [
+      "d",
+      "k"
+    ],
+    "g": [
+      "k",
+      "h"
+    ],
+    "k": [
+      "g",
+      "t"
+    ],
+    "h": [
+      "k",
+      "x"
+    ]
+  },
+  "finals": {
+    "ang": [
+      "an",
+      "eng"
+    ],
+    "eng": [
+      "ang",
+      "en"
+    ],
+    "ing": [
+      "in",
+      "iang"
+    ],
+    "in": [
+      "ing",
+      "ian"
+    ],
+    "ian": [
+      "in",
+      "iang"
+    ],
+    "iang": [
+      "ian",
+      "ing"
+    ],
+    "ao": [
+      "ou",
+      "an"
+    ],
+    "ou": [
+      "ao",
+      "o"
+    ],
+    "an": [
+      "ang",
+      "en"
+    ],
+    "en": [
+      "eng",
+      "an"
+    ],
+    "ong": [
+      "eng",
+      "uang"
+    ]
+  }
+};
+
+let questions = [];
+let current = 0, score = 0, total = 0;
+
+function startGame() {
+  total = parseInt(document.getElementById("question-count").value);
+  questions = shuffleArray(wordBank).slice(0, total);
+  document.getElementById("start-screen").classList.add("hidden");
+  document.getElementById("game-area").classList.remove("hidden");
+  document.getElementById("total").textContent = total;
+  showQuestion();
+}
+
+function showQuestion() {
+  let item = questions[current];
+  document.getElementById("word-display").textContent = item.word;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("current").textContent = current + 1;
+
+  let correct = item.pinyin;
+  let options = generateConfusableOptions(correct);
+  options = shuffleArray([correct, ...options.slice(0, 3)]);
+
+  let container = document.getElementById("options");
+  container.innerHTML = "";
+  options.forEach(p => {
+    let btn = document.createElement("button");
+    btn.textContent = p;
+    btn.onclick = () => checkAnswer(p, correct);
+    container.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected, correct) {
+  let fb = document.getElementById("feedback");
+  if (selected === correct) {
+    score++;
+    fb.textContent = "✅ 正確！";
+  } else {
+    fb.textContent = `❌ 錯了，正確答案是：${correct}`;
+  }
+  document.getElementById("score").textContent = score;
+
+  setTimeout(() => {
+    current++;
+    if (current < total) {
+      showQuestion();
+    } else {
+      endGame();
+    }
+  }, 1000);
+}
+
+function endGame() {
+  document.getElementById("game-area").classList.add("hidden");
+  document.getElementById("end-screen").classList.remove("hidden");
+  document.getElementById("final-score").textContent = `${score} / ${total}`;
+}
+
+function playPronunciation() {
+  let word = questions[current].word;
+  let utter = new SpeechSynthesisUtterance(word);
+  utter.lang = "zh-CN";
+  speechSynthesis.speak(utter);
+}
+
+function shuffleArray(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+function generateConfusableOptions(correct) {
+  const tones = {
+    'a': ['ā','á','ǎ','à'],
+    'e': ['ē','é','ě','è'],
+    'i': ['ī','í','ǐ','ì'],
+    'o': ['ō','ó','ǒ','ò'],
+    'u': ['ū','ú','ǔ','ù'],
+    'ü': ['ǖ','ǘ','ǚ','ǜ']
+  };
+  const toneMap = {
+    'ā':'a','á':'a','ǎ':'a','à':'a',
+    'ē':'e','é':'e','ě':'e','è':'e',
+    'ī':'i','í':'i','ǐ':'i','ì':'i',
+    'ō':'o','ó':'o','ǒ':'o','ò':'o',
+    'ū':'u','ú':'u','ǔ':'u','ù':'u',
+    'ǖ':'ü','ǘ':'ü','ǚ':'ü','ǜ':'ü'
+  };
+  const removeTone = (pinyin) => pinyin.split('').map(c => toneMap[c] || c).join('');
+  const applyTone = (syl) => {
+    for (let v in tones) {
+      if (syl.includes(v)) {
+        return syl.replace(v, tones[v][Math.floor(Math.random()*4)]);
+      }
+    }
+    return syl;
+  };
+
+  let noToneParts = removeTone(correct).split(" ");
+  let variations = new Set();
+
+  while (variations.size < 10) {
+    let variation = noToneParts.map(syl => {
+      let init = Object.keys(confusables.initials).find(i => syl.startsWith(i));
+      let fin = Object.keys(confusables.finals).find(f => syl.endsWith(f));
+      let newSyl = syl;
+      if (init && confusables.initials[init]) {
+        let newInit = confusables.initials[init][Math.floor(Math.random() * confusables.initials[init].length)];
+        newSyl = newSyl.replace(init, newInit);
+      }
+      if (fin && confusables.finals[fin]) {
+        let newFin = confusables.finals[fin][Math.floor(Math.random() * confusables.finals[fin].length)];
+        newSyl = newSyl.replace(fin, newFin);
+      }
+      return applyTone(newSyl);
+    }).join(" ");
+    if (variation !== correct) variations.add(variation);
+  }
+
+  return Array.from(variations);
+}
+</script>
 </body>
 </html>
