@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
@@ -10,6 +9,11 @@
     button { font-size: 18px; padding: 10px 20px; margin: 5px 0; width: 100%; max-width: 400px; }
     .hidden { display: none; }
     .feedback { margin-top: 10px; font-weight: bold; }
+    #next-btn { 
+      background-color: #4CAF50;
+      color: white;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -33,6 +37,7 @@
   <div id="options"></div>
   <div class="feedback" id="feedback"></div>
   <p>得分：<span id="score">0</span> ／ 題號：<span id="current">1</span> / <span id="total"></span></p>
+  <button id="next-btn" class="hidden" onclick="nextQuestion()">下一題</button>
 </div>
 
 <div id="end-screen" class="hidden">
@@ -357,6 +362,7 @@ function showQuestion() {
   document.getElementById("word-display").textContent = item.word;
   document.getElementById("feedback").textContent = "";
   document.getElementById("current").textContent = current + 1;
+  document.getElementById("next-btn").classList.add("hidden");
 
   let correct = item.pinyin;
   let options = generateConfusableOptions(correct);
@@ -382,14 +388,27 @@ function checkAnswer(selected, correct) {
   }
   document.getElementById("score").textContent = score;
 
-  setTimeout(() => {
-    current++;
-    if (current < total) {
-      showQuestion();
-    } else {
-      endGame();
-    }
-  }, 1000);
+  // 禁用所有選項按鈕
+  document.querySelectorAll("#options button").forEach(btn => {
+    btn.disabled = true;
+  });
+  
+  // 顯示「下一題」按鈕
+  document.getElementById("next-btn").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  // 啟用所有選項按鈕
+  document.querySelectorAll("#options button").forEach(btn => {
+    btn.disabled = false;
+  });
+  
+  current++;
+  if (current < total) {
+    showQuestion();
+  } else {
+    endGame();
+  }
 }
 
 function endGame() {
